@@ -4,63 +4,63 @@ import { User } from './components/User'
 import { Planet } from './components/Planet'
 import { People, Planets } from './FakeData'
 import { useState } from 'react'
+import { Task } from './components/Task'
 
 // if renamed to App.modules.css you can specify css objects by using
 // import styles from "./App.module.css" and pass as style={styles.classname}
 
 function App() {
-  const [age, setAge] = useState(0)
-  const [inputValue, setInputValue] = useState('')
-  const [showText, setShowText] = useState(false)
-  const [textColor, setTextColor] = useState('green')
-  const increaseAge = () => {
-    console.log('before', age)
-    setAge(age + 1)
+  const [todoList, setTodoList] = useState([])
+  const [newTask, setNewTask] = useState('')
+  const handleChange = (event) => {
+    setNewTask(event.target.value)
   }
+
+  const addTask = () => {
+    const task = {
+      id: todoList.length === 0 ? 1 : todoList[todoList.length - 1].id + 1,
+      taskName: newTask,
+      isComplete: false,
+    }
+    const newTodoList = [...todoList, task]
+    setTodoList(newTodoList)
+  }
+  const deleteTask = (id) => {
+    setTodoList(
+      todoList.filter((task) => {
+        return task.id !== id
+      })
+    )
+  }
+
+  const isCompleteTask = (id) => {
+    const UpdatedTodoList = todoList.map((task) => {
+      console.log(task.isComplete)
+      return task.id === id ? { ...task, isComplete: !task.isComplete } : task
+    })
+    setTodoList(UpdatedTodoList)
+  }
+
   return (
     <div className="App">
-      {age}
-      <button
-        onClick={() => {
-          increaseAge()
-        }}
-      >
-        Increase Age
-      </button>
-      <button
-        onClick={() => {
-          setAge(age - 1)
-        }}
-      >
-        Decrease Age
-      </button>
-      <button
-        onClick={() => {
-          setAge(0)
-        }}
-      >
-        0 Age
-      </button>
-      {'  '}
-      <input
-        type="text"
-        placeholder="pass anything..."
-        value={inputValue}
-        onChange={(event) => {
-          console.log(event.target.value)
-          setInputValue(event.target.value)
-        }}
-      />
-      <hr></hr>
-      {showText === true && <h1 style={{ color: textColor }}> Show Text</h1>}
-      <button
-        onClick={() => {
-          setShowText(!showText)
-          setTextColor(textColor === 'green' ? 'red' : 'black')
-        }}
-      >
-        Show/Hide
-      </button>
+      <div className="addTask">
+        <input onChange={handleChange} placeholder="add a task" />
+        <button onClick={addTask}>Add Task</button>
+      </div>
+      <div className="List-container">
+        <div className="List">
+          {todoList.map((task) => {
+            return (
+              <Task
+                key={task.id}
+                task={task}
+                isCompleteTask={isCompleteTask}
+                deleteTask={deleteTask}
+              />
+            )
+          })}
+        </div>
+      </div>
     </div>
   )
 }
