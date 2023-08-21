@@ -1,7 +1,11 @@
 export const Task = (props) => {
   const { task, isCompleteTask, deleteTask } = props
   return (
-    <div key={task.id} className="task">
+    <div
+      key={task.id}
+      className="task"
+      style={{ backgroundColor: task.isComplete ? 'green' : 'transparent' }}
+    >
       <h1>{task.taskName}</h1>
       <div className="task-controls">
         <input
